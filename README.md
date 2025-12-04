@@ -47,14 +47,7 @@ Each developer does this once:
    - Download the `credentials.json`
 5. Put **your** `credentials.json` into the project root  
 6. Make sure there is **no** `token.json` yet  
-7. Run:
-
-   ```bash
-   conda activate agent-env
-   python src/tests/test_calendar_direct.py
-   ```
-
-8. A browser opens → log into **your** Google account  
+7. A browser opens → log into **your** Google account  
    - This creates **your personal** `token.json`  
    - From now on, events go to **your calendar**
 
