@@ -52,9 +52,9 @@ with st.sidebar:
         for name, client in available_clients.items():
             with st.container():
                 st.markdown(f"**🤖 {name.upper()}**")
-                st.caption(f"Model: {client.model}")
-                st.caption(f"Provider: {client.provider}")
-                cost = client.input_cost_per_million
+                st.caption(f"Model: {client.model_name}")
+                st.caption(f"Provider: {client.get_provider_name()}")
+                cost = getattr(client, 'INPUT_PRICE_PER_1M', 0.0)
                 if cost == 0:
                     st.caption("💰 Cost: FREE! 🎉")
                 else:
