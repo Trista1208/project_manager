@@ -7,7 +7,7 @@ from typing import List, Optional
 from dotenv import load_dotenv
 
 from .base_llm import BaseLLM
-from .llm_clients import GeminiClient, DeepSeekClient, GroqClient
+from .llm_clients import GeminiClient, DeepSeekClient, GroqClient, GitHubClient
 from .multi_agent_orchestrator import MultiAgentOrchestrator, OrchestratorStrategy
 
 # Load environment
@@ -69,6 +69,32 @@ class LLMFactory:
             return DeepSeekClient(api_key, model_name)
         except Exception as e:
             print(f"⚠️  Failed to create DeepSeek client: {e}")
+            return None
+    
+    @staticmethod
+    def create_github_client(
+        api_key: Optional[str] = None,
+        model_name: str = "gpt-4o-mini"
+    ) -> Optional[GitHubClient]:
+        """
+        Create GitHub Models client (FREE! Uses GitHub token).
+        
+        Args:
+            api_key: GitHub token (or from env)
+            model_name: Model name
+        
+        Returns:
+            GitHubClient or None if not configured
+        """
+        api_key = api_key or os.getenv("GITHUB_TOKEN")
+        if not api_key:
+            print("⚠️  GitHub Models not configured: GITHUB_TOKEN not set")
+            return None
+        
+        try:
+            return GitHubClient(api_key, model_name)
+        except Exception as e:
+            print(f"⚠️  Failed to create GitHub client: {e}")
             return None
     
     @staticmethod
