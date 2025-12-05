@@ -258,27 +258,62 @@ with col2:
                                 
                                 st.markdown("---")
                     
+                    # Get metrics if multi-agent
+                    if len(available_clients) > 1:
+                        metrics = orchestrator.get_metrics()
+                        
+                        st.markdown("---")
+                        st.subheader("📊 Multi-Agent Performance")
+                        
+                        cols_metrics = st.columns(len(available_clients))
+                        for idx, (model_name, model_metrics) in enumerate(metrics.get('models', {}).items()):
+                            with cols_metrics[idx]:
+                                st.markdown(f"**🤖 {model_name.upper()}**")
+                                requests = model_metrics.get('requests', 0)
+                                if requests > 0:
+                                    st.metric("Requests", requests)
+                                    cost = model_metrics.get('total_cost', 0)
+                                    if cost == 0:
+                                        st.success("FREE! 🎉")
+                                    else:
+                                        st.info(f"${cost:.6f}")
+                                else:
+                                    st.caption("Not used this run")
+                    
                     # Summary
                     st.balloons()
                     
                     st.success("🎉 **Processing Complete!**")
                     
                     with st.expander("📊 Summary", expanded=True):
-                        col_summary1, col_summary2, col_summary3 = st.columns(3)
+                        col_summary1, col_summary2, col_summary3, col_summary4 = st.columns(4)
                         
                         with col_summary1:
-                            st.metric("✅ Tasks Generated", len(tasks))
+                            st.metric("🤖 AI Models", len(available_clients))
                         
                         with col_summary2:
-                            st.metric("📅 Time Blocks", len(schedule))
+                            st.metric("✅ Tasks Generated", len(tasks))
                         
                         with col_summary3:
+                            st.metric("📅 Time Blocks", len(schedule))
+                        
+                        with col_summary4:
                             total_hours = sum(float(t.get('duration', 0)) for t in tasks)
                             st.metric("⏱️ Total Hours", f"{total_hours:.1f}")
                         
                         st.success("✅ All tasks scheduled into business hours (8-12, 14-17)")
                         st.success("✅ Dependencies analyzed and respected")
-                        st.info("💰 Cost: $0.00 (using FREE AI models!)")
+                        st.success(f"✅ Strategy: {strategy}")
+                        
+                        # Calculate total cost
+                        if len(available_clients) > 1 and 'metrics' in locals():
+                            total_cost = sum(m.get('total_cost', 0) for m in metrics.get('models', {}).values())
+                            if total_cost == 0:
+                                st.info("💰 Cost: $0.00 (using FREE models!)")
+                            else:
+                                st.info(f"💰 Cost: ${total_cost:.6f}")
+                        else:
+                            st.info("💰 Cost: $0.00 (using FREE models!)")
                 
                 except Exception as e:
                     st.error(f"❌ Error processing issue: {e}")
