@@ -2,6 +2,7 @@
 """
 Web-based demo of the AI agent.
 Shows real-time task breakdown and scheduling in a browser.
+Now with MULTI-AGENT support showing all 3 AI models!
 
 Run: streamlit run web_demo.py
 """
@@ -9,13 +10,14 @@ import streamlit as st
 import sys
 from datetime import datetime
 from dotenv import load_dotenv
+import os
 
 # Load environment
 load_dotenv()
 
 # Page config
 st.set_page_config(
-    page_title="AI DevOps Agent Demo",
+    page_title="Multi-Agent AI DevOps Demo",
     page_icon="🤖",
     layout="wide"
 )
@@ -25,41 +27,79 @@ try:
     from src.core.llm import LLMClient
     from src.core.task_breakdown import TaskBreakdown
     from src.core.scheduler import Scheduler
+    from src.core.llm_factory import LLMFactory
+    from src.core.multi_agent_orchestrator import MultiAgentOrchestrator
 except Exception as e:
     st.error(f"Failed to import components: {e}")
     st.stop()
 
 # Title
-st.title("🤖 AI-Powered DevOps Task Scheduler")
-st.markdown("**Automatically breaks down issues into scheduled tasks using FREE AI models!**")
+st.title("🤖 Multi-Agent AI DevOps Scheduler")
+st.markdown("**3 AI models working together to break down issues!**")
 st.markdown("---")
 
 # Sidebar
 with st.sidebar:
-    st.header("🔧 Configuration")
+    st.header("🔧 Multi-Agent Configuration")
     
-    # Check LLM status
+    # Check available LLM clients
     try:
-        llm = LLMClient()
-        st.success(f"✅ AI Model: {llm.provider}")
-        st.info(f"📊 Model: {llm.model}")
-        llm_ready = True
+        factory = LLMFactory()
+        available_clients = factory.create_all_available_clients()
+        
+        st.success(f"✅ {len(available_clients)} AI Model(s) Available:")
+        
+        for name, client in available_clients.items():
+            with st.container():
+                st.markdown(f"**🤖 {name.upper()}**")
+                st.caption(f"Model: {client.model}")
+                st.caption(f"Provider: {client.provider}")
+                cost = client.input_cost_per_million
+                if cost == 0:
+                    st.caption("💰 Cost: FREE! 🎉")
+                else:
+                    st.caption(f"💰 Cost: ${cost}/1M tokens")
+                st.markdown("")
+        
+        llm_ready = len(available_clients) > 0
+        
     except Exception as e:
-        st.error(f"❌ AI Model not configured")
+        st.error(f"❌ AI Models not configured")
         st.error(str(e))
         llm_ready = False
     
     st.markdown("---")
     
+    # Strategy selection
+    st.header("🎯 Orchestration Strategy")
+    strategy = st.selectbox(
+        "Choose strategy:",
+        ["single", "specialized", "fallback", "ensemble"],
+        index=1,  # Default to specialized
+        help="Different ways to use multiple AI models"
+    )
+    
+    st.caption(f"""
+    **{strategy.capitalize()}:**
+    {
+        "Uses one model (fastest)" if strategy == "single" else
+        "Routes to best model per task" if strategy == "specialized" else
+        "Tries cheap models first" if strategy == "fallback" else
+        "Uses all models, picks best"
+    }
+    """)
+    
+    st.markdown("---")
+    
     st.header("ℹ️ About")
     st.markdown("""
-    This demo shows how the AI agent:
-    1. Takes a project issue
-    2. Breaks it into tasks (using AI)
+    This multi-agent system:
+    1. Uses 3+ AI models
+    2. Breaks issues into tasks
     3. Analyzes dependencies
     4. Schedules intelligently
     
-    **Cost:** $0.00 (uses FREE models!)
+    **Cost:** $0.00 - $0.08 per 100 issues!
     """)
     
     st.markdown("---")
@@ -146,13 +186,24 @@ with col2:
             st.error("Please enter an issue description!")
         else:
             # Show processing
-            with st.spinner("🤖 AI is analyzing the issue..."):
+            with st.spinner("🤖 Multi-Agent AI is analyzing the issue..."):
                 try:
-                    # Task breakdown
-                    breaker = TaskBreakdown()
-                    tasks = breaker.breakdown(issue_text)
-                    
-                    st.success(f"✅ AI generated {len(tasks)} tasks!")
+                    # Multi-agent task breakdown
+                    if len(available_clients) > 1:
+                        # Use multi-agent orchestrator
+                        orchestrator = MultiAgentOrchestrator(strategy=strategy)
+                        result = orchestrator.breakdown_issue(issue_text)
+                        tasks = result.get("tasks", [])
+                        model_used = result.get("model_used", "Unknown")
+                        
+                        st.success(f"✅ Multi-Agent AI generated {len(tasks)} tasks!")
+                        st.info(f"🤖 Strategy: {strategy.capitalize()} | Model used: {model_used}")
+                    else:
+                        # Fallback to single LLM
+                        breaker = TaskBreakdown()
+                        tasks = breaker.breakdown(issue_text)
+                        st.success(f"✅ AI generated {len(tasks)} tasks!")
+                        st.info(f"🤖 Using single model: {list(available_clients.keys())[0]}")
                     
                     # Display tasks
                     st.subheader("📋 Generated Tasks")
