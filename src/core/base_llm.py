@@ -126,3 +126,4 @@ class BaseLLM(ABC):
         """Reset metrics to zero."""
         self.metrics = LLMMetrics()
 
+

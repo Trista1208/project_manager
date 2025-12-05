@@ -116,3 +116,4 @@ class GeminiClient(BaseLLM):
         output_cost = (output_tokens / 1_000_000) * self.OUTPUT_PRICE_PER_1M
         return input_cost + output_cost
 
+
