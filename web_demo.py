@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Web-based demo of the AI agent.
-Shows real-time task breakdown and scheduling in a browser.
-Now with MULTI-AGENT support showing all 3 AI models!
+DevOps Project Management Assistant - Web Demo
+Intelligent task breakdown and scheduling for DevOps teams.
+Powered by AI to automatically plan and organize your projects.
 
 Run: streamlit run web_demo.py
 """
@@ -17,8 +17,8 @@ load_dotenv()
 
 # Page config
 st.set_page_config(
-    page_title="Multi-Agent AI DevOps Demo",
-    page_icon="🤖",
+    page_title="DevOps Project Assistant",
+    page_icon="🚀",
     layout="wide"
 )
 
@@ -34,13 +34,13 @@ except Exception as e:
     st.stop()
 
 # Title
-st.title("🤖 Multi-Agent AI DevOps Scheduler")
-st.markdown("**3 AI models working together to break down issues!**")
+st.title("🚀 DevOps Project Assistant")
+st.markdown("**Intelligent task planning powered by AI - Automatically organize your DevOps projects**")
 st.markdown("---")
 
 # Sidebar
 with st.sidebar:
-    st.header("🔧 Multi-Agent Configuration")
+    st.header("⚙️ System Configuration")
     
     # Check available LLM clients
     try:
@@ -71,35 +71,37 @@ with st.sidebar:
     st.markdown("---")
     
     # Strategy selection
-    st.header("🎯 Orchestration Strategy")
+    st.header("🎯 Planning Strategy")
     strategy = st.selectbox(
-        "Choose strategy:",
+        "AI Processing Mode:",
         ["single", "specialized", "fallback", "ensemble"],
         index=1,  # Default to specialized
-        help="Different ways to use multiple AI models"
+        help="How the system processes your requirements"
     )
     
     st.caption(f"""
     **{strategy.capitalize()}:**
     {
-        "Uses one model (fastest)" if strategy == "single" else
-        "Routes to best model per task" if strategy == "specialized" else
-        "Tries cheap models first" if strategy == "fallback" else
-        "Uses all models, picks best"
+        "Fast - uses one AI" if strategy == "single" else
+        "Smart - picks best AI for the task" if strategy == "specialized" else
+        "Cost-efficient - uses free AI first" if strategy == "fallback" else
+        "Accurate - uses all AIs, picks best result"
     }
     """)
     
     st.markdown("---")
     
-    st.header("ℹ️ About")
+    st.header("ℹ️ About This Tool")
     st.markdown("""
-    This multi-agent system:
-    1. Uses 3+ AI models
-    2. Breaks issues into tasks
-    3. Analyzes dependencies
-    4. Schedules intelligently
+    **DevOps Project Assistant**
     
-    **Cost:** $0.00 - $0.08 per 100 issues!
+    Automatically transforms project requirements into:
+    • Clear, actionable tasks
+    • Dependency analysis
+    • Smart scheduling
+    • Time estimates
+    
+    **Cost:** FREE for most use! 🎉
     """)
     
     st.markdown("---")
@@ -186,18 +188,21 @@ with col2:
             st.error("Please enter an issue description!")
         else:
             # Show processing
-            with st.spinner("🤖 Multi-Agent AI is analyzing the issue..."):
+            with st.spinner("🔄 Analyzing requirements and generating project plan..."):
                 try:
-                    # Multi-agent task breakdown
+                    # AI-powered task breakdown
                     if len(available_clients) > 1:
-                        # Use multi-agent orchestrator
-                        orchestrator = MultiAgentOrchestrator(strategy=strategy)
+                        # Use intelligent AI system
+                        orchestrator = MultiAgentOrchestrator(
+                            llm_clients=list(available_clients.values()),
+                            strategy=strategy
+                        )
                         result = orchestrator.breakdown_issue(issue_text)
                         tasks = result.get("tasks", [])
                         model_used = result.get("model_used", "Unknown")
                         
-                        st.success(f"✅ Multi-Agent AI generated {len(tasks)} tasks!")
-                        st.info(f"🤖 Strategy: {strategy.capitalize()} | Model used: {model_used}")
+                        st.success(f"✅ Generated {len(tasks)} actionable tasks!")
+                        st.info(f"📊 Mode: {strategy.capitalize()} | AI Engine: {model_used}")
                     else:
                         # Fallback to single LLM
                         breaker = TaskBreakdown()
@@ -258,12 +263,12 @@ with col2:
                                 
                                 st.markdown("---")
                     
-                    # Get metrics if multi-agent
+                    # Get metrics if using multiple AI engines
                     if len(available_clients) > 1:
                         metrics = orchestrator.get_metrics()
                         
                         st.markdown("---")
-                        st.subheader("📊 Multi-Agent Performance")
+                        st.subheader("📊 AI System Performance")
                         
                         cols_metrics = st.columns(len(available_clients))
                         for idx, (model_name, model_metrics) in enumerate(metrics.get('models', {}).items()):
