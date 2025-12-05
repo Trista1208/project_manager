@@ -2,20 +2,45 @@
 credentials.json
 token.json
 
+# Environment files
+.env
+.env.local
+.env.*.local
+
 # Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
 
 # Virtual environments
-.env
 .venv/
 venv/
 env/
+ENV/
+
+# Project state
+state/
+*.db
 
 # PyCharm & local settings
 .idea/
 *.iml
 .vscode/
+*.swp
+*.swo
 
 # macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.bak
+*~

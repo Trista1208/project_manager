@@ -1,0 +1,20 @@
+# Core dependencies
+openai>=1.0.0
+python-dotenv>=1.0.0
+jinja2>=3.1.0
+
+# API clients
+requests>=2.31.0
+google-api-python-client>=2.0.0
+google-auth>=2.0.0
+google-auth-oauthlib>=1.0.0
+google-auth-httplib2>=0.1.0
+
+# MCP server
+mcp>=0.1.0
+uvicorn>=0.24.0
+
+# Utilities
+pyyaml>=6.0
+python-dateutil>=2.8.0
+
