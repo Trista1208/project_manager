@@ -40,9 +40,10 @@ python src/tools/mcp_server.py      # Terminal 1
 python src/agent/enhanced_agent.py  # Terminal 2
 ```
 
-### For Multi-Agent LLM (+ DeepSeek R1 + GPT-4):
+### For Multi-Agent LLM (+ DeepSeek R1 + Groq FREE):
 ```bash
 # Configure multiple LLM API keys in .env (see MULTI_AGENT_LLM.md)
+# Groq is FREE and ultra-fast! Get key at: https://console.groq.com/keys
 python src/tools/mcp_server.py          # Terminal 1
 python src/agent/multi_agent_runner.py  # Terminal 2 - Demo & comparison
 ```
@@ -78,32 +79,29 @@ python src/agent/multi_agent_runner.py  # Terminal 2 - Demo & comparison
        │                │
        └────────┬───────┘
                 ▼
-    ┌───────────────────────┐
-    │  Enhanced Agent       │
-    │  (Orchestrator)       │
-    └───────────┬───────────┘
-                │
-        ┌───────┴────────┐
-        │                │
-        ▼                ▼
-┌───────────────┐  ┌──────────────┐
-│ LLM Breakdown │  │  State Store │
-│   (Gemini)    │  │ (Persistent) │
-└───────┬───────┘  └──────────────┘
-        │
-        ▼
-┌───────────────┐
-│   Scheduler   │
-│  (8-12,14-17) │
-└───────┬───────┘
-        │
-   ┌────┴──────┐
-   │           │
-   ▼           ▼
-┌──────────┐ ┌────────┐
-│ Calendar │ │ Slack  │
-│  Events  │ │ Notify │
-└──────────┘ └────────┘
+    ┌───────────────────────────────────┐
+    │  Multi-Agent Orchestrator         │
+    │  ┌─────────┐ ┌──────────┐ ┌─────┐│
+    │  │ Gemini  │ │DeepSeek  │ │Groq ││
+    │  │ (Fast)  │ │(Reason)  │ │(FREE│││
+    │  └─────────┘ └──────────┘ └─────┘│
+    └───────────────┬───────────────────┘
+                    │
+            ┌───────┴────────┐
+            │                │
+            ▼                ▼
+    ┌───────────────┐  ┌──────────────┐
+    │   Scheduler   │  │  State Store │
+    │  (8-12,14-17) │  │ (Persistent) │
+    └───────┬───────┘  └──────────────┘
+            │
+       ┌────┴──────┐
+       │           │
+       ▼           ▼
+  ┌──────────┐ ┌────────┐
+  │ Calendar │ │ Slack  │
+  │  Events  │ │ Notify │
+  └──────────┘ └────────┘
 ```
 
 ---

@@ -7,7 +7,7 @@ from typing import List, Optional
 from dotenv import load_dotenv
 
 from .base_llm import BaseLLM
-from .llm_clients import GeminiClient, DeepSeekClient, OpenAIClient
+from .llm_clients import GeminiClient, DeepSeekClient, GroqClient
 from .multi_agent_orchestrator import MultiAgentOrchestrator, OrchestratorStrategy
 
 # Load environment
@@ -72,29 +72,30 @@ class LLMFactory:
             return None
     
     @staticmethod
-    def create_openai_client(
+    def create_groq_client(
         api_key: Optional[str] = None,
-        model_name: str = "gpt-4o"
-    ) -> Optional[OpenAIClient]:
+        model_name: str = "llama-3.3-70b-versatile"
+    ) -> Optional[GroqClient]:
         """
-        Create OpenAI GPT client.
+        Create Groq client (FREE alternative to OpenAI).
         
         Args:
-            api_key: API key (or from env)
-            model_name: Model name
+            api_key: API key (or from env) - Get free at https://console.groq.com
+            model_name: Model name (llama-3.3-70b-versatile recommended)
         
         Returns:
-            OpenAIClient or None if not configured
+            GroqClient or None if not configured
         """
-        api_key = api_key or os.getenv("OPENAI_API_KEY")
+        api_key = api_key or os.getenv("GROQ_API_KEY")
         if not api_key:
-            print("⚠️  OpenAI not configured: OPENAI_API_KEY not set")
+            print("⚠️  Groq not configured: GROQ_API_KEY not set")
+            print("   Get FREE API key at: https://console.groq.com/keys")
             return None
         
         try:
-            return OpenAIClient(api_key, model_name)
+            return GroqClient(api_key, model_name)
         except Exception as e:
-            print(f"⚠️  Failed to create OpenAI client: {e}")
+            print(f"⚠️  Failed to create Groq client: {e}")
             return None
     
     @staticmethod
@@ -118,10 +119,10 @@ class LLMFactory:
             clients.append(deepseek)
             print(f"✅ DeepSeek client configured: {deepseek.model_name}")
         
-        openai = LLMFactory.create_openai_client()
-        if openai:
-            clients.append(openai)
-            print(f"✅ OpenAI client configured: {openai.model_name}")
+        groq = LLMFactory.create_groq_client()
+        if groq:
+            clients.append(groq)
+            print(f"✅ Groq client configured: {groq.model_name} (FREE!)")
         
         if not clients:
             raise ValueError(

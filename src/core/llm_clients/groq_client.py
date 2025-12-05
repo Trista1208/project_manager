@@ -1,6 +1,7 @@
-# src/core/llm_clients/openai_client.py
+# src/core/llm_clients/groq_client.py
 """
-OpenAI GPT LLM client implementation.
+Groq LLM client implementation (FREE alternative to OpenAI).
+Groq provides free, ultra-fast inference with Llama and Mixtral models.
 """
 import time
 from datetime import datetime
@@ -9,32 +10,32 @@ from openai import OpenAI
 from ..base_llm import BaseLLM, LLMResponse
 
 
-class OpenAIClient(BaseLLM):
-    """OpenAI GPT LLM client."""
+class GroqClient(BaseLLM):
+    """Groq LLM client - FREE and ultra-fast!"""
     
-    # Pricing per 1M tokens (GPT-4o as of 2024)
-    INPUT_PRICE_PER_1M = 2.50  # $2.50 per 1M input tokens
-    OUTPUT_PRICE_PER_1M = 10.00  # $10.00 per 1M output tokens
+    # Pricing per 1M tokens (FREE tier available!)
+    INPUT_PRICE_PER_1M = 0.00  # FREE!
+    OUTPUT_PRICE_PER_1M = 0.00  # FREE!
     
-    def __init__(self, api_key: str, model_name: str = "gpt-4o"):
+    def __init__(self, api_key: str, model_name: str = "llama-3.3-70b-versatile"):
         """
-        Initialize OpenAI client.
+        Initialize Groq client.
         
         Args:
-            api_key: OpenAI API key
-            model_name: OpenAI model name (gpt-4o, gpt-4-turbo, etc.)
+            api_key: Groq API key (get free at https://console.groq.com)
+            model_name: Groq model name
+                - llama-3.3-70b-versatile (recommended, fastest)
+                - llama-3.1-70b-versatile
+                - mixtral-8x7b-32768
+                - gemma2-9b-it
         """
         super().__init__(api_key, model_name)
         
-        self.client = OpenAI(api_key=api_key)
-        
-        # Adjust pricing based on model
-        if "gpt-4o-mini" in model_name:
-            self.INPUT_PRICE_PER_1M = 0.15
-            self.OUTPUT_PRICE_PER_1M = 0.60
-        elif "gpt-3.5-turbo" in model_name:
-            self.INPUT_PRICE_PER_1M = 0.50
-            self.OUTPUT_PRICE_PER_1M = 1.50
+        # Groq uses OpenAI-compatible API
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url="https://api.groq.com/openai/v1"
+        )
     
     def generate(self, prompt: str, **kwargs) -> LLMResponse:
         """
@@ -103,20 +104,18 @@ class OpenAIClient(BaseLLM):
     
     def get_provider_name(self) -> str:
         """Return provider name."""
-        return "OpenAI GPT"
+        return "Groq (FREE)"
     
     def estimate_cost(self, input_tokens: int, output_tokens: int) -> float:
         """
-        Estimate cost for OpenAI request.
+        Estimate cost for Groq request.
         
         Args:
             input_tokens: Number of input tokens
             output_tokens: Number of output tokens
         
         Returns:
-            Cost in USD
+            Cost in USD (always 0.00 - FREE!)
         """
-        input_cost = (input_tokens / 1_000_000) * self.INPUT_PRICE_PER_1M
-        output_cost = (output_tokens / 1_000_000) * self.OUTPUT_PRICE_PER_1M
-        return input_cost + output_cost
+        return 0.00  # Groq is FREE!
 

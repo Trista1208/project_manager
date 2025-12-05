@@ -179,7 +179,7 @@ class MultiAgentOrchestrator:
         Use specialized LLMs for different tasks.
         - Gemini: Fast task breakdown (default)
         - DeepSeek R1: Complex reasoning and validation
-        - GPT-4: Planning and optimization
+        - Groq (Llama): Planning and optimization (FREE!)
         
         Args:
             prompt: Input prompt
@@ -198,9 +198,9 @@ class MultiAgentOrchestrator:
                 self.llm_clients[1] if len(self.llm_clients) > 1 else self.llm_clients[0]
             )
         elif task_type == "planning" and len(self.llm_clients) > 2:
-            # Use GPT-4 for planning
+            # Use Groq (Llama) for planning
             selected_llm = next(
-                (llm for llm in self.llm_clients if "gpt" in llm.model_name.lower()),
+                (llm for llm in self.llm_clients if "llama" in llm.model_name.lower() or "groq" in llm.get_provider_name().lower()),
                 self.llm_clients[2] if len(self.llm_clients) > 2 else self.llm_clients[0]
             )
         else:
@@ -240,7 +240,7 @@ class MultiAgentOrchestrator:
     def _fallback_strategy(self, prompt: str, **kwargs) -> Dict[str, Any]:
         """
         Try LLMs in order (cheap to expensive), stop on first success.
-        Order: Gemini → DeepSeek → GPT-4
+        Order: Gemini → Groq (FREE) → DeepSeek
         
         Args:
             prompt: Input prompt
