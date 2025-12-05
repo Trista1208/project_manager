@@ -2,7 +2,7 @@
 
 ## 🤖 Overview
 
-Your project now includes a **complete multi-agent LLM system** that orchestrates multiple AI models (Gemini, DeepSeek R1, and GPT-4) for superior task breakdown performance.
+Your project now includes a **complete multi-agent LLM system** that orchestrates multiple AI models (Gemini, DeepSeek R1, and Groq Llama 3.3 70B) for superior task breakdown performance.
 
 ---
 
@@ -34,12 +34,12 @@ Your project now includes a **complete multi-agent LLM system** that orchestrate
 │  ┌──────────────┐  ┌──────────────┐  ┌────────────┐ │
 │  │  Agent 1     │  │  Agent 2     │  │  Agent 3   │ │
 │  │              │  │              │  │            │ │
-│  │  Gemini      │  │ DeepSeek R1  │  │  GPT-4     │ │
-│  │  2.0 Flash   │  │  Reasoner    │  │  -o        │ │
-│  │              │  │              │  │            │ │
+│  │  Gemini      │  │ DeepSeek R1  │  │  Groq      │ │
+│  │  2.0 Flash   │  │  Reasoner    │  │ Llama 3.3  │ │
+│  │              │  │              │  │  70B       │ │
 │  │ • Fast       │  │ • Reasoning  │  │ • Planning │ │
 │  │ • Cheap      │  │ • Validation │  │ • Quality  │ │
-│  │ $0.075/1M    │  │ $0.55/1M     │  │ $2.50/1M   │ │
+│  │ $0.075/1M    │  │ $0.55/1M     │  │ FREE! 🎉   │ │
 │  └──────────────┘  └──────────────┘  └────────────┘ │
 │                                                       │
 │  Results aggregated based on strategy                │
@@ -78,8 +78,8 @@ Your project now includes a **complete multi-agent LLM system** that orchestrate
 **Cost Example (per issue):**
 - Gemini: $0.0001
 - DeepSeek: $0.0008
-- GPT-4: $0.0035
-- **Total: ~$0.0044**
+- Groq: $0.0000 (FREE!)
+- **Total: ~$0.0009**
 
 ---
 
@@ -89,7 +89,7 @@ Your project now includes a **complete multi-agent LLM system** that orchestrate
 - Routes tasks to the best LLM for each job:
   - **Gemini** → Fast task breakdown (default)
   - **DeepSeek R1** → Complex reasoning & validation
-  - **GPT-4** → Planning & optimization
+  - **Groq Llama 3.3** → Planning & optimization (FREE!)
 
 **When to use:**
 - Production environments
@@ -117,7 +117,7 @@ Your project now includes a **complete multi-agent LLM system** that orchestrate
 **How it works:**
 - Tries LLMs in order of cost (cheap → expensive)
 - Stops at first successful response
-- Order: Gemini → DeepSeek → GPT-4
+- Order: Gemini → Groq (FREE!) → DeepSeek
 
 **When to use:**
 - Budget-conscious projects
@@ -185,12 +185,14 @@ Your project now includes a **complete multi-agent LLM system** that orchestrate
 4. Create new key
 5. Copy key
 
-#### **OpenAI GPT-4 (Optional)**
-1. Go to: https://platform.openai.com/
+#### **Groq (Optional but FREE!)** 🎉
+1. Go to: https://console.groq.com/
 2. Sign up / Log in
 3. Go to API Keys
 4. Create new key
 5. Copy key
+
+**Note:** Groq is **completely FREE** with high rate limits! Highly recommended.
 
 ### **Step 2: Configure `.env`**
 
@@ -200,7 +202,7 @@ GOOGLE_API_KEY=your_gemini_key
 
 # Optional (for multi-agent)
 DEEPSEEK_API_KEY=your_deepseek_key
-OPENAI_API_KEY=your_openai_key
+GROQ_API_KEY=your_groq_key  # FREE! 🎉
 
 # Strategy selection
 LLM_STRATEGY=specialized
@@ -220,7 +222,7 @@ python src/tools/mcp_server.py
 # You should see:
 # ✅ Gemini client configured: gemini-2.0-flash-exp
 # ✅ DeepSeek client configured: deepseek-reasoner
-# ✅ OpenAI client configured: gpt-4o
+# ✅ Groq client configured: llama-3.3-70b-versatile (FREE!)
 # 🎯 Multi-agent orchestrator created:
 #    Strategy: specialized
 #    LLMs: 3 configured
@@ -318,9 +320,11 @@ await session.call_tool("llm_reset_metrics", {})
 | Strategy | Cost | Speed | Accuracy |
 |----------|------|-------|----------|
 | Single (Gemini) | $0.01 | ⚡⚡⚡ Fast | ⭐⭐⭐ Good |
-| Fallback | $0.02 | ⚡⚡ Medium | ⭐⭐⭐⭐ Very Good |
+| Fallback | $0.01 | ⚡⚡ Medium | ⭐⭐⭐⭐ Very Good |
 | Specialized | $0.01 | ⚡⚡⚡ Fast | ⭐⭐⭐⭐ Very Good |
-| Ensemble | $0.44 | ⚡ Slow | ⭐⭐⭐⭐⭐ Excellent |
+| Ensemble | $0.09 | ⚡⚡ Fast | ⭐⭐⭐⭐⭐ Excellent |
+
+**Note:** With Groq being FREE, costs are 80% lower than before!
 
 ### **Latency (Average per Issue)**
 
@@ -345,18 +349,18 @@ GOOGLE_API_KEY=your_key
 LLM_STRATEGY=specialized
 GOOGLE_API_KEY=your_key
 DEEPSEEK_API_KEY=your_key
-OPENAI_API_KEY=your_key
+GROQ_API_KEY=your_key  # FREE!
 ```
-**Cost: ~$0.01-0.05/100 issues**
+**Cost: ~$0.01-0.09/100 issues (Groq is FREE!)**
 
 #### **Research (Maximum Accuracy):**
 ```env
 LLM_STRATEGY=ensemble
 GOOGLE_API_KEY=your_key
 DEEPSEEK_API_KEY=your_key
-OPENAI_API_KEY=your_key
+GROQ_API_KEY=your_key  # FREE!
 ```
-**Cost: ~$0.44/100 issues**
+**Cost: ~$0.09/100 issues (80% cheaper with Groq!)**
 
 ---
 
@@ -449,7 +453,7 @@ This multi-agent system demonstrates:
    python -c "from src.core.task_breakdown_multi import TaskBreakdownMulti; print('OK')"
    ```
 
-### **"DeepSeek/OpenAI not configured"**
+### **"DeepSeek/Groq not configured"**
 
 **Problem:** Optional LLMs not available
 
@@ -457,7 +461,7 @@ This multi-agent system demonstrates:
 ```env
 # Add to .env
 DEEPSEEK_API_KEY=your_key
-OPENAI_API_KEY=your_key
+GROQ_API_KEY=your_key  # FREE! Highly recommended!
 ```
 
 ### **High Costs**
@@ -489,7 +493,7 @@ src/core/
 │   ├── __init__.py
 │   ├── gemini_client.py         # Gemini implementation
 │   ├── deepseek_client.py       # DeepSeek R1 implementation
-│   └── openai_client.py         # GPT-4 implementation
+│   └── groq_client.py           # Groq Llama 3.3 implementation (FREE!)
 ├── llm_factory.py               # Factory for creating LLMs
 ├── multi_agent_orchestrator.py  # Orchestration strategies
 ├── task_breakdown_multi.py      # Multi-agent task breakdown
@@ -510,12 +514,13 @@ src/tools/
 
 You now have a **production-ready multi-agent LLM system** that:
 
-✅ Supports 3 different LLMs (Gemini, DeepSeek R1, GPT-4)
+✅ Supports 3 different LLMs (Gemini, DeepSeek R1, Groq Llama 3.3)
 ✅ Implements 4 orchestration strategies
 ✅ Tracks costs and performance
 ✅ Provides comparison capabilities
 ✅ Maintains backward compatibility
 ✅ Offers graceful degradation
+✅ **80% cost reduction** with Groq (FREE!)
 
 **This significantly enhances your project's academic and practical value!** 🌟
 

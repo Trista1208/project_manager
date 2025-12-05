@@ -39,7 +39,8 @@ GitHub API → TaskBreakdown (LLM) → Scheduler → Google Calendar
 
 2. **Task Breakdown** (`task_breakdown.py`)
    - Uses Jinja2 template
-   - Calls Gemini 2.5 Flash via OpenAI-compatible API
+   - Calls Gemini 2.0 Flash via OpenAI-compatible API
+   - Multi-agent version supports Gemini, DeepSeek R1, and Groq (FREE!)
    - Parses JSON response with task, duration, depends_on
 
 3. **Scheduler** (`scheduler.py`)
