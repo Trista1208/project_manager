@@ -74,7 +74,7 @@ Terminal 2:
 
 ```bash
 conda activate agent-env
-python src/core/run_agent.py
+python src/agent/run_agent.py
 ```
 
 The agent will:
