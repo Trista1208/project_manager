@@ -217,3 +217,4 @@ Devops_and_LLMs/
 4. 📈 Plan extensions (Jira, Slack, etc.)
 5. 🎓 Prepare presentation/demo
 
+

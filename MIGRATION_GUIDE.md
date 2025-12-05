@@ -493,3 +493,4 @@ For detailed setup of new features, see:
 - `SETUP_GUIDE.md` - Setup instructions
 - `BEST_PRACTICES.md` - Tips and tricks
 
+

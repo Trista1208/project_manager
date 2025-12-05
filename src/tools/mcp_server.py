@@ -16,6 +16,21 @@ from src.core.task_breakdown import TaskBreakdown
 from src.core.scheduler import Scheduler
 from src.core.state_store import ProjectStateStore
 
+# Multi-agent LLM support
+try:
+    from src.core.task_breakdown_multi import TaskBreakdownMulti
+    from src.core.llm_factory import LLMFactory
+    MULTI_AGENT_ENABLED = True
+    # Try to create multi-agent breaker
+    multi_strategy = os.getenv("LLM_STRATEGY", "specialized")
+    print(f"🤖 Initializing multi-agent system with strategy: {multi_strategy}")
+    multi_breaker = TaskBreakdownMulti(strategy=multi_strategy)
+except Exception as e:
+    print(f"⚠️  Multi-agent LLM not available: {e}")
+    print(f"   Falling back to single LLM mode")
+    MULTI_AGENT_ENABLED = False
+    multi_breaker = None
+
 # Import new clients (with error handling for optional features)
 try:
     from src.tools.jira_client import JiraClient
@@ -204,9 +219,72 @@ def tasks_breakdown(issue_text: str) -> str:
     """
     Use Jinja + Gemini (LLMClient) to break an issue into tasks.
     Returns a JSON string list of tasks.
+    
+    NOTE: This uses single LLM mode. For multi-agent, use tasks_breakdown_multi.
     """
     tasks = breaker.breakdown(issue_text)
     return json.dumps(tasks)
+
+
+@MCP.tool()
+def tasks_breakdown_multi(issue_text: str) -> str:
+    """
+    Use multi-agent LLM orchestrator to break an issue into tasks.
+    Uses multiple LLMs (Gemini, DeepSeek R1, GPT-4) based on configured strategy.
+    Returns a JSON string list of tasks.
+    
+    Strategies:
+    - ensemble: Query all LLMs, pick best result
+    - specialized: Use each LLM for what it's best at
+    - fallback: Try cheap LLMs first, fallback to expensive
+    - single: Use only one LLM (same as tasks_breakdown)
+    """
+    if not MULTI_AGENT_ENABLED:
+        return json.dumps({
+            "error": "Multi-agent LLM not configured",
+            "fallback": "Using single LLM mode"
+        })
+    
+    try:
+        tasks = multi_breaker.breakdown(issue_text)
+        return json.dumps(tasks)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
+
+@MCP.tool()
+def llm_get_metrics() -> str:
+    """
+    Get performance metrics from all configured LLMs.
+    Returns JSON with cost, latency, and success rates per LLM.
+    """
+    if not MULTI_AGENT_ENABLED:
+        return json.dumps({"error": "Multi-agent LLM not configured"})
+    
+    try:
+        metrics = multi_breaker.get_metrics()
+        return json.dumps({
+            "strategy": multi_breaker.strategy,
+            "llms": metrics
+        })
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
+
+@MCP.tool()
+def llm_reset_metrics() -> str:
+    """
+    Reset performance metrics for all LLMs.
+    Useful for starting fresh benchmarking.
+    """
+    if not MULTI_AGENT_ENABLED:
+        return json.dumps({"error": "Multi-agent LLM not configured"})
+    
+    try:
+        multi_breaker.reset_metrics()
+        return json.dumps({"success": True, "message": "Metrics reset"})
+    except Exception as e:
+        return json.dumps({"error": str(e)})
 
 
 @MCP.tool()

@@ -40,6 +40,13 @@ python src/tools/mcp_server.py      # Terminal 1
 python src/agent/enhanced_agent.py  # Terminal 2
 ```
 
+### For Multi-Agent LLM (+ DeepSeek R1 + GPT-4):
+```bash
+# Configure multiple LLM API keys in .env (see MULTI_AGENT_LLM.md)
+python src/tools/mcp_server.py          # Terminal 1
+python src/agent/multi_agent_runner.py  # Terminal 2 - Demo & comparison
+```
+
 ---
 
 ## 📚 Documentation
@@ -49,7 +56,8 @@ python src/agent/enhanced_agent.py  # Terminal 2
 ### Getting Started
 - **🚀 [`QUICK_START.md`](QUICK_START.md)** - Fast 30-minute setup
 - **📖 [`SETUP_GUIDE.md`](SETUP_GUIDE.md)** - Detailed setup instructions
-- **⚡ [`ENHANCED_FEATURES.md`](ENHANCED_FEATURES.md)** - **NEW!** Jira, Slack, state store
+- **🤖 [`MULTI_AGENT_LLM.md`](MULTI_AGENT_LLM.md)** - **NEW!** Multi-agent LLM system
+- **⚡ [`ENHANCED_FEATURES.md`](ENHANCED_FEATURES.md)** - Jira, Slack, state store
 - **🔄 [`MIGRATION_GUIDE.md`](MIGRATION_GUIDE.md)** - Upgrade from original agent
 
 ### Planning & Development
@@ -104,10 +112,13 @@ python src/agent/enhanced_agent.py  # Terminal 2
 
 | Feature | Status | Description |
 |---------|--------|-------------|
+| **Multi-Agent LLM** | 🆕✅ | **3 LLMs** (Gemini, DeepSeek R1, GPT-4) |
+| **Orchestration Strategies** | 🆕✅ | **4 strategies** (ensemble, specialized, fallback, single) |
+| **LLM Performance Tracking** | 🆕✅ | Cost, latency, success rates |
 | **GitHub Integration** | ✅ | Fetch and process GitHub issues |
 | **Jira Integration** | ✅ | Fetch and process Jira issues |
 | **Unified Task Model** | ✅ | Consistent format across sources |
-| **AI Task Breakdown** | ✅ | Gemini-powered task generation |
+| **AI Task Breakdown** | ✅ | Multi-agent or single LLM |
 | **Dependency Resolution** | ✅ | Topological sort for task order |
 | **Smart Scheduling** | ✅ | Business hours, no overlaps |
 | **Google Calendar** | ✅ | Auto-create calendar events |
@@ -169,8 +180,8 @@ GITHUB_REPO="owner/repo" python src/agent/enhanced_agent.py
 # Test Jira only
 JIRA_PROJECT="PROJ" python src/agent/enhanced_agent.py
 
-# Test both
-GITHUB_REPO="owner/repo" JIRA_PROJECT="PROJ" python src/agent/enhanced_agent.py
+# Test multi-agent LLM (compare 3 models)
+LLM_STRATEGY="ensemble" python src/agent/multi_agent_runner.py
 ```
 
 ---

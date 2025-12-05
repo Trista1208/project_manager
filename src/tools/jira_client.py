@@ -249,3 +249,4 @@ class JiraClient:
         except requests.RequestException as e:
             raise Exception(f"Failed to transition {issue_key}: {str(e)}")
 
+
