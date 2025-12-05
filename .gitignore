@@ -19,6 +19,7 @@ __pycache__/
 venv/
 env/
 ENV/
+test_venv/
 
 # Project state
 state/
