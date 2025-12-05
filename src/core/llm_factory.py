@@ -140,11 +140,11 @@ class LLMFactory:
             clients["github"] = github
             print(f"✅ GitHub client configured: {github.model_name} (FREE!)")
         
-        # Try Gemini
-        gemini = LLMFactory.create_gemini_client()
-        if gemini:
-            clients["gemini"] = gemini
-            print(f"✅ Gemini client configured: {gemini.model_name}")
+        # Gemini DISABLED - Not using Gemini in this project
+        # gemini = LLMFactory.create_gemini_client()
+        # if gemini:
+        #     clients["gemini"] = gemini
+        #     print(f"✅ Gemini client configured: {gemini.model_name}")
         
         # Try DeepSeek
         deepseek = LLMFactory.create_deepseek_client()
