@@ -3,7 +3,7 @@
 Factory for creating LLM clients and multi-agent orchestrator.
 """
 import os
-from typing import List, Optional
+from typing import List, Optional, Dict
 from dotenv import load_dotenv
 
 from .base_llm import BaseLLM
@@ -125,35 +125,44 @@ class LLMFactory:
             return None
     
     @staticmethod
-    def create_all_available_clients() -> List[BaseLLM]:
+    def create_all_available_clients() -> Dict[str, BaseLLM]:
         """
         Create all available LLM clients based on environment configuration.
         
         Returns:
-            List of configured LLM clients
+            Dict of client_name -> LLM client instance
         """
-        clients = []
+        clients = {}
         
-        # Try to create each client
+        # Try GitHub Models first (FREE! Uses existing GitHub token)
+        github = LLMFactory.create_github_client()
+        if github:
+            clients["github"] = github
+            print(f"✅ GitHub client configured: {github.model_name} (FREE!)")
+        
+        # Try Gemini
         gemini = LLMFactory.create_gemini_client()
         if gemini:
-            clients.append(gemini)
+            clients["gemini"] = gemini
             print(f"✅ Gemini client configured: {gemini.model_name}")
         
+        # Try DeepSeek
         deepseek = LLMFactory.create_deepseek_client()
         if deepseek:
-            clients.append(deepseek)
+            clients["deepseek"] = deepseek
             print(f"✅ DeepSeek client configured: {deepseek.model_name}")
         
+        # Try Groq (FREE!)
         groq = LLMFactory.create_groq_client()
         if groq:
-            clients.append(groq)
+            clients["groq"] = groq
             print(f"✅ Groq client configured: {groq.model_name} (FREE!)")
         
         if not clients:
             raise ValueError(
                 "No LLM clients could be configured. "
-                "Please set at least GOOGLE_API_KEY in .env"
+                "Please check your API keys in .env file.\n"
+                "You need at least one of: GITHUB_TOKEN, GOOGLE_API_KEY, GROQ_API_KEY, DEEPSEEK_API_KEY"
             )
         
         return clients
