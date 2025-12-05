@@ -11,6 +11,7 @@ Your multi-agent LLM system is fully configured with 3 AI models!
 | **Gemini 2.0 Flash** | ⚠️ Add your key | $0.075/$0.30 per 1M | Get at: https://aistudio.google.com/app/apikey |
 | **DeepSeek R1** | ✅ Configured | $0.55/$2.19 per 1M | `sk-fa5b...914a` ✅ |
 | **Groq Llama 3.3** | ✅ Configured | **$0.00 FREE!** | `gsk_ydWo...CHue8` ✅ |
+| **GitHub Token** | ✅ Configured | Free | `ghp_C8CE...4Moj4T` ✅ |
 
 ---
 
@@ -23,13 +24,12 @@ cd /Users/jiaqiyu/Desktop/Devops_and_LLMs-master
 cp YOUR_CONFIG.txt .env
 ```
 
-### **Step 2: Add Your Keys to .env**
+### **Step 2: Add Your Gemini Key to .env**
 
 Edit `.env` and add:
 - Your **Gemini API key** (GOOGLE_API_KEY) - Get free at: https://aistudio.google.com/app/apikey
-- Your **GitHub token** (GITHUB_TOKEN) - Get at: https://github.com/settings/tokens
 
-**DeepSeek and Groq are already configured!** ✅
+**DeepSeek, Groq, and GitHub are already configured!** ✅✅✅
 
 ### **Step 3: Run Your Multi-Agent System**
 
@@ -180,13 +180,12 @@ LLM_STRATEGY=ensemble python src/agent/multi_agent_runner.py
 
 ## ✅ Checklist
 
-- [x] DeepSeek API key configured
-- [x] Groq API key configured (FREE!)
-- [ ] Get Gemini API key
-- [ ] Get GitHub token
+- [x] DeepSeek API key configured ✅
+- [x] Groq API key configured (FREE!) ✅
+- [x] GitHub token configured ✅
+- [ ] Get Gemini API key (ONLY ONE LEFT!)
 - [ ] Copy YOUR_CONFIG.txt to .env
 - [ ] Add Gemini key to .env
-- [ ] Add GitHub token to .env
 - [ ] Test: `python src/agent/multi_agent_runner.py`
 
 ---
