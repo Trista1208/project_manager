@@ -14,11 +14,12 @@ from .llm_factory import LLMFactory
 class TaskBreakdownMulti:
     """Task breakdown using multi-agent orchestrator."""
     
-    def __init__(self, strategy: str = "specialized"):
+    def __init__(self, llm_clients: List = None, strategy: str = "specialized"):
         """
         Initialize task breakdown with multi-agent support.
         
         Args:
+            llm_clients: List of LLM clients (optional, will auto-create if not provided)
             strategy: Orchestration strategy (ensemble, specialized, fallback, single)
         """
         templates_path = os.path.join(
@@ -28,10 +29,20 @@ class TaskBreakdownMulti:
         self.template = self.env.get_template("breakdown_prompt.j2")
         
         # Create multi-agent orchestrator
-        self.orchestrator = LLMFactory.create_orchestrator(strategy=strategy)
+        if llm_clients:
+            # Use provided clients
+            from .multi_agent_orchestrator import MultiAgentOrchestrator
+            self.orchestrator = MultiAgentOrchestrator(
+                llm_clients=llm_clients,
+                strategy=strategy
+            )
+        else:
+            # Auto-create clients
+            self.orchestrator = LLMFactory.create_orchestrator(strategy=strategy)
+        
         self.strategy = strategy
     
-    def breakdown(self, issue_text: str) -> List[Dict[str, Any]]:
+    def breakdown(self, issue_text: str) -> Dict[str, Any]:
         """
         Break down issue into tasks using multi-agent orchestrator.
         
@@ -39,7 +50,7 @@ class TaskBreakdownMulti:
             issue_text: Issue text to break down
         
         Returns:
-            List of task dictionaries
+            Dictionary with tasks and metadata
         """
         prompt = self.template.render(issue=issue_text)
         
@@ -48,8 +59,8 @@ class TaskBreakdownMulti:
         
         if not result.get("success"):
             error_msg = result.get("error", "Unknown error")
-            print(f"❌ Multi-agent generation failed: {error_msg}")
-            raise Exception(f"LLM generation failed: {error_msg}")
+            print(f"❌ AI generation failed: {error_msg}")
+            raise Exception(f"AI generation failed: {error_msg}")
         
         raw = result["content"]
         
@@ -72,7 +83,16 @@ class TaskBreakdownMulti:
         try:
             tasks = json.loads(cleaned)
             print(f"✅ Parsed {len(tasks)} tasks successfully")
-            return tasks
+            
+            # Return dict with tasks and metadata
+            return {
+                "tasks": tasks,
+                "model_used": model,
+                "provider_used": provider,
+                "cost": cost,
+                "latency_ms": latency,
+                "strategy": self.strategy
+            }
         except json.JSONDecodeError:
             # Last resort: try first [ ... ] slice
             start = cleaned.find("[")
@@ -81,7 +101,15 @@ class TaskBreakdownMulti:
                 snippet = cleaned[start:end + 1]
                 tasks = json.loads(snippet)
                 print(f"✅ Parsed {len(tasks)} tasks (with cleanup)")
-                return tasks
+                
+                return {
+                    "tasks": tasks,
+                    "model_used": model,
+                    "provider_used": provider,
+                    "cost": cost,
+                    "latency_ms": latency,
+                    "strategy": self.strategy
+                }
             
             # If still failing, show raw output
             print("❌ LLM output was not valid JSON:\n", raw)

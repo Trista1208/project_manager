@@ -191,24 +191,26 @@ with col2:
             with st.spinner("🔄 Analyzing requirements and generating project plan..."):
                 try:
                     # AI-powered task breakdown
-                    if len(available_clients) > 1:
-                        # Use intelligent AI system
-                        orchestrator = MultiAgentOrchestrator(
-                            llm_clients=list(available_clients.values()),
-                            strategy=strategy
-                        )
-                        result = orchestrator.breakdown_issue(issue_text)
+                    from src.core.task_breakdown_multi import TaskBreakdownMulti
+                    
+                    # Use multi-agent task breakdown
+                    breaker = TaskBreakdownMulti(
+                        llm_clients=list(available_clients.values()),
+                        strategy=strategy
+                    )
+                    result = breaker.breakdown(issue_text)
+                    
+                    # Extract tasks and metadata
+                    if isinstance(result, dict):
                         tasks = result.get("tasks", [])
                         model_used = result.get("model_used", "Unknown")
-                        
-                        st.success(f"✅ Generated {len(tasks)} actionable tasks!")
-                        st.info(f"📊 Mode: {strategy.capitalize()} | AI Engine: {model_used}")
+                        orchestrator = breaker.orchestrator  # For metrics
                     else:
-                        # Fallback to single LLM
-                        breaker = TaskBreakdown()
-                        tasks = breaker.breakdown(issue_text)
-                        st.success(f"✅ AI generated {len(tasks)} tasks!")
-                        st.info(f"🤖 Using single model: {list(available_clients.keys())[0]}")
+                        tasks = result
+                        model_used = "Unknown"
+                    
+                    st.success(f"✅ Generated {len(tasks)} actionable tasks!")
+                    st.info(f"📊 Mode: {strategy.capitalize()} | AI Engine: {model_used}")
                     
                     # Display tasks
                     st.subheader("📋 Generated Tasks")
@@ -264,8 +266,8 @@ with col2:
                                 st.markdown("---")
                     
                     # Get metrics if using multiple AI engines
-                    if len(available_clients) > 1:
-                        metrics = orchestrator.get_metrics()
+                    if len(available_clients) > 1 and 'orchestrator' in locals():
+                        metrics = orchestrator.get_all_metrics()
                         
                         st.markdown("---")
                         st.subheader("📊 AI System Performance")
