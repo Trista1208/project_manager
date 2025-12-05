@@ -11,8 +11,15 @@ from src.core.base_llm import BaseLLM
 class GitHubClient(BaseLLM):
     """GitHub Models client using OpenAI-compatible API."""
     
-    def __init__(self):
-        github_token = os.getenv("GITHUB_TOKEN")
+    def __init__(self, api_key: str = None, model_name: str = "gpt-4o-mini"):
+        """
+        Initialize GitHub Models client.
+        
+        Args:
+            api_key: GitHub token (optional, will try environment if not provided)
+            model_name: Model to use (default: gpt-4o-mini)
+        """
+        github_token = api_key or os.getenv("GITHUB_TOKEN")
         
         if not github_token:
             raise ValueError("GITHUB_TOKEN not found in environment")
@@ -22,8 +29,8 @@ class GitHubClient(BaseLLM):
             base_url="https://models.inference.ai.azure.com"
         )
         
-        # Use GPT-4o-mini (FREE and very capable!)
-        self.model = "gpt-4o-mini"
+        # Use specified model (defaults to GPT-4o-mini - FREE and very capable!)
+        self.model = model_name
         self.provider = "GitHub Models"
         
         # Pricing (FREE!)

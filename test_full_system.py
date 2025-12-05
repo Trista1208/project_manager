@@ -16,18 +16,32 @@ print("🚀 FULL SYSTEM TEST - END TO END")
 print("=" * 70)
 print()
 
-# Check Gemini key
+# Check for LLM API keys (GitHub Models or Gemini)
+github_token = os.getenv("GITHUB_TOKEN")
 gemini_key = os.getenv("GOOGLE_API_KEY")
-if not gemini_key or "your_" in gemini_key:
-    print("❌ GOOGLE_API_KEY not configured in .env")
+
+if github_token and "ghp_" in github_token:
+    print("✅ GitHub token found - Using GitHub Models (FREE!)")
+    print(f"   Token: {github_token[:10]}...{github_token[-4:]}")
+    using_github = True
+elif gemini_key and "your_" not in gemini_key:
+    print("✅ Gemini API key found - Using Gemini")
+    using_github = False
+else:
+    print("❌ No LLM API key configured in .env")
     print()
-    print("To run this test, you need:")
+    print("You have TWO FREE options:")
+    print()
+    print("Option 1: GitHub Models (RECOMMENDED - You already have the token!)")
+    print("  ✅ Your GITHUB_TOKEN is already in .env!")
+    print("  ✅ Just run the test - it should work!")
+    print()
+    print("Option 2: Gemini")
     print("  1. Get FREE Gemini key: https://aistudio.google.com/app/apikey")
     print("  2. Add to .env file: GOOGLE_API_KEY=AIza...")
     print()
     sys.exit(1)
 
-print("✅ Gemini API key found")
 print()
 
 # Test 1: Import all components
@@ -48,6 +62,7 @@ print("2️⃣  Testing LLM client...")
 try:
     llm = LLMClient()
     print(f"   ✅ LLM client initialized")
+    print(f"   ✅ Provider: {llm.provider}")
     print(f"   ✅ Model: {llm.model}")
 except Exception as e:
     print(f"   ❌ LLM initialization failed: {e}")
@@ -57,16 +72,23 @@ print()
 
 # Test 3: Test LLM with simple prompt
 print("3️⃣  Testing LLM connection...")
-print("   Sending test prompt to Gemini...")
+if using_github:
+    print("   Sending test prompt to GitHub Models...")
+else:
+    print("   Sending test prompt to Gemini...")
+
 try:
     test_response = llm.run("Respond with exactly: System OK")
     print(f"   ✅ LLM responded: {test_response[:100]}")
-    print(f"   ✅ Gemini API is working!")
+    if using_github:
+        print(f"   ✅ GitHub Models API is working!")
+    else:
+        print(f"   ✅ Gemini API is working!")
 except Exception as e:
     print(f"   ❌ LLM call failed: {e}")
     print()
     print("   This might be due to:")
-    print("   • Invalid API key")
+    print("   • Invalid API key/token")
     print("   • Network connectivity")
     print("   • API rate limits")
     sys.exit(1)
@@ -88,7 +110,7 @@ This should be responsive and work on mobile.
 
 try:
     breaker = TaskBreakdown()
-    tasks = breaker.breakdown_issue(test_issue)
+    tasks = breaker.breakdown(test_issue)
     
     print(f"   ✅ Task breakdown successful!")
     print(f"   ✅ Generated {len(tasks)} tasks:")
@@ -114,7 +136,7 @@ print()
 print("5️⃣  Testing scheduler...")
 try:
     scheduler = Scheduler()
-    schedule = scheduler.schedule_tasks(tasks)
+    schedule = scheduler.schedule(tasks)
     
     print(f"   ✅ Scheduler successful!")
     print(f"   ✅ Scheduled {len(schedule)} time blocks:")
@@ -213,7 +235,10 @@ print("=" * 70)
 print()
 
 print("✅ Core System:")
-print("   ✅ LLM (Gemini) - WORKING")
+if using_github:
+    print("   ✅ LLM (GitHub Models - FREE!) - WORKING")
+else:
+    print("   ✅ LLM (Gemini) - WORKING")
 print("   ✅ Task Breakdown - WORKING")
 print("   ✅ Scheduler - WORKING")
 
