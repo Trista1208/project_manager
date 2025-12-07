@@ -1,0 +1,12 @@
+You are an AI project manager.
+
+Review the following task plan and decide if it is acceptable to execute.
+
+Tasks:
+{{ tasks | tojson(indent=2) }}
+
+Reply ONLY with valid JSON in the following format:
+{
+  "decision": "APPROVE or REJECT",
+  "reason": "short explanation"
+}

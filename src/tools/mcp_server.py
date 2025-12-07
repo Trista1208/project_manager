@@ -35,6 +35,7 @@ except Exception as e:
 try:
     from src.tools.jira_client import JiraClient
     jira_client = JiraClient()
+    print("✅ JIRA BASE URL =", jira_client.base_url)
     JIRA_ENABLED = True
 except (ImportError, ValueError) as e:
     print(f"Jira not configured: {e}")

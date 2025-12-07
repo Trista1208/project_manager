@@ -10,6 +10,8 @@ from typing import List, Dict, Any, Optional
 
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
+from src.core.plan_validation import PlanValidator
+
 
 HOST = "http://127.0.0.1:5000/mcp"
 
@@ -19,6 +21,7 @@ class EnhancedAgent:
     
     def __init__(self):
         self.session: Optional[ClientSession] = None
+        self.plan_validator = PlanValidator()
     
     async def initialize(self, session: ClientSession):
         """Initialize the agent with an MCP session."""
@@ -112,6 +115,39 @@ class EnhancedAgent:
             )
             tasks = json.loads(breakdown_result.content[0].text)
             print(f"✂️  Broke down into {len(tasks)} tasks")
+
+            # === LLM Decision Engine ===
+            decision = self.plan_validator.validate(tasks)
+
+            print(f"🧠 Decision Engine: {decision['decision']}")
+            print(f"   Reason: {decision['reason']}")
+
+            # Log decision reasoning (APPROVE or REJECT)
+            await self.session.call_tool(
+                "state_log_execution",
+                {
+                    "action": "plan_validation",
+                    "details_json": json.dumps({
+                        "issue_key": issue_key,
+                        "decision": decision["decision"],
+                        "reason": decision["reason"]
+                    }),
+                    "success": decision["decision"] == "APPROVE"
+                }
+            )
+
+
+            if decision["decision"] != "APPROVE":
+                print("⛔ Plan rejected. Skipping scheduling.")
+
+
+                return {
+                    "success": False,
+                    "issue_key": issue_key,
+                    "error": "Plan rejected by Decision Engine"
+                }
+
+
             
             # Schedule tasks
             schedule_result = await self.session.call_tool(
