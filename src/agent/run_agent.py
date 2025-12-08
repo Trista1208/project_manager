@@ -58,4 +58,6 @@ async def run_agent(repo: str):
 
 
 if __name__ == "__main__":
+    # TODO: Replace with your test repository
+    # Example: "your-username/test-repo"
     asyncio.run(run_agent("BaHu-Git/Task_Manager"))

@@ -1,18 +1,26 @@
-# MCP Task Agent (GitHub → Tasks → Calendar)
+# 🤖 AI-Powered DevOps Task Scheduler
 
-This agent:
+An intelligent project management agent that uses AI to automatically break down GitHub/Jira issues into scheduled tasks.
 
-1. Reads issues from a GitHub repo  
-2. Breaks them into smaller tasks (using Gemini + Jinja)  
-3. Estimates dependencies + durations  
-4. Schedules them into your **Google Calendar** (08–12, 14–17, no overlaps, max 5 tasks)
+## 🎯 What It Does
+
+The agent automatically:
+
+1. **📥 Fetches Issues** from GitHub (or Jira)
+2. **🤖 Breaks Down Tasks** using AI (GitHub Models, Groq, DeepSeek)
+3. **📊 Analyzes Dependencies** between tasks
+4. **📅 Schedules Intelligently** into business hours (8-12, 14-17)
+5. **📆 Creates Calendar Events** in Google Calendar (optional)
+6. **💬 Sends Notifications** to Slack (optional)
+7. **💾 Tracks History** and execution state
 
 ---
 
-## 1. Clone + environment
+## 🚀 Quick Start
 
+### 1. Environment Setup
 ```bash
-git clone https://github.com/Meupi/Devops_and_LLMs.git
+git clone -b yu https://github.com/Meupi/Devops_and_LLMs.git
 cd Devops_and_LLMs
 
 conda env create -f environment.yml
@@ -21,41 +29,38 @@ conda activate agent-env
 
 ---
 
-## 2. .env (API keys)
+### 2. Create .env
+Create a file .env in the project root using the env.template file.
 
-Create a file `.env` in the project root:
+--- 
 
-```env
-GOOGLE_API_KEY=your_gemini_api_key_here
-GITHUB_TOKEN=your_github_token_here
-```
-
-- `GOOGLE_API_KEY`: Gemini 2.5 Flash API key  
-- `GITHUB_TOKEN`: GitHub personal access token with `repo` scope
-
----
-
-## 3. Google Calendar setup (each dev uses their own account)
-
+### 3. Google Calendar Setup
 Each developer does this once:
 
-1. Go to **Google Cloud Console**  
-2. Create or select a project  
-3. Enable **Google Calendar API**  
-4. Go to **APIs & Services → Credentials**  
-   - Create **OAuth client ID → Desktop app**  
-   - Download the `credentials.json`
-5. Put **your** `credentials.json` into the project root  
-6. Make sure there is **no** `token.json` yet  
-7. A browser opens → log into **your** Google account  
-   - This creates **your personal** `token.json`  
-   - From now on, events go to **your calendar**
+1. Go to Google Cloud Console
+2. Create or select a project
+3. Enable Google Calendar API
+4. Go to APIs & Services → Credentials 
+- Create OAuth client ID → Desktop app
+- Download the `credentials.json`
+5. In APIs & Services go to OAuth consent screen -> Audience
+- Add your mail address to test users
+6. Put your `credentials.json` into the project root
+7. Make sure there is no `token.json` yet and run create_token.py
+```bash
+python src/core/create_token.py
+```
+8. A browser opens → log into your Google account
+- This creates your personal `token.json`
+- From now on, events go to your calendar
 
 > `credentials.json` and `token.json` are git-ignored and stay local.
 
+**See:** [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) for more options.
+
 ---
 
-## 4. Start MCP server
+### 4. Start MCP Server
 
 Terminal 1:
 
@@ -68,18 +73,93 @@ MCP server runs on `http://127.0.0.1:5000/mcp`.
 
 ---
 
-## 5. Run the agent
+### 5. Run the agent
 
 Terminal 2:
 
 ```bash
 conda activate agent-env
-python src/core/run_agent.py
+
+# Simple: GitHub → Schedule
+python src/agent/run_agent.py
+
+# Multi-Agent: 3 AI models
+python src/agent/multi_agent_runner.py
+
+# Enhanced: + Jira + Slack + State
+python src/agent/enhanced_agent.py
 ```
+
+Test different orchestration strategies:
+```bash
+# 1. Single (default, cheapest)
+LLM_STRATEGY=single python src/agent/multi_agent_runner.py
+
+# 2. Specialized (recommended)
+LLM_STRATEGY=specialized python src/agent/multi_agent_runner.py
+
+# 3. Fallback (reliable)
+LLM_STRATEGY=fallback python src/agent/multi_agent_runner.py
+
+# 4. Ensemble (most accurate)
+LLM_STRATEGY=ensemble python src/agent/multi_agent_runner.py
+```
+
+
+
+
+---
+
+## 📊 Orchestration Strategies
+
+```bash
+# 1. Single (default, cheapest)
+LLM_STRATEGY=single python src/agent/multi_agent_runner.py
+
+# 2. Specialized (recommended)
+LLM_STRATEGY=specialized python src/agent/multi_agent_runner.py
+
+# 3. Fallback (reliable)
+LLM_STRATEGY=fallback python src/agent/multi_agent_runner.py
+
+# 4. Ensemble (most accurate)
+LLM_STRATEGY=ensemble python src/agent/multi_agent_runner.py
+```
+
+---
 
 The agent will:
 
-- Fetch issues from the configured GitHub repo  
-- Use Gemini to break them into tasks with dependencies + durations  
+- Fetch issues from the GitHub repo and Jira  
+- Use LLM to break them into tasks with dependencies + durations  
 - Schedule tasks in **08:00–12:00 and 14:00–17:00**, no overlaps, max 5 tasks  
-- Create the corresponding events in **your Google Calendar**
+- Create the corresponding events in **your Google Calendar**, sends **Slack notifications** and updates **Jira issues**
+
+
+## 📚 Documentation
+
+### Essential Guides
+- **[QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)** - Get started in 30 seconds
+- **[INSTALL.md](INSTALL.md)** - Complete installation guide
+- **[CLEANUP_SUMMARY.md](CLEANUP_SUMMARY.md)** - Repository organization
+
+### Detailed Documentation
+- **[docs/START_HERE.md](docs/START_HERE.md)** - Project overview
+- **[docs/MULTI_AGENT_LLM.md](docs/MULTI_AGENT_LLM.md)** - Multi-agent system
+- **[docs/ENHANCED_FEATURES.md](docs/ENHANCED_FEATURES.md)** - Jira, Slack, State
+- **[docs/TEST_SCENARIOS.md](docs/TEST_SCENARIOS.md)** - Test cases
+- **[docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md)** - Code quality tips
+
+---
+
+---
+
+### Verify Installation
+
+```bash
+# Quick check (no dependencies needed)
+python check_setup.py
+
+# Full verification (requires dependencies)
+python verify_system.py
+```
