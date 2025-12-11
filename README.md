@@ -39,14 +39,17 @@ Each developer does this once:
 
 1. Go to Google Cloud Console
 2. Create or select a project
-3. Enable Google Calendar API
-4. Go to APIs & Services → Credentials 
-- Create OAuth client ID → Desktop app
-- Download the `credentials.json`
+3. Create Jira API Token
+   - In Jira go to your account (top-right) -> account settings -> security
+   - create API Token
+5. Enable Google Calendar API
+6. Go to APIs & Services → Credentials
+   - Create OAuth client ID → Desktop app
+   - Download the `credentials.json`
 5. In APIs & Services go to OAuth consent screen -> Audience
-- Add your mail address to test users
-6. Put your `credentials.json` into the project root
-7. Make sure there is no `token.json` yet and run create_token.py
+   - Add your mail address to test users
+7. Put your `credentials.json` into the project root
+8. Make sure there is no `token.json` yet and run create_token.py
 ```bash
 python src/core/create_token.py
 ```
