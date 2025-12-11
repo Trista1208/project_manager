@@ -60,7 +60,7 @@ class JiraClient:
                 f'ORDER BY priority DESC, created DESC'
             )
         
-        url = f"{self.base_url}/rest/api/3/search"
+        url = f"{self.base_url}/rest/api/3/search/jql"
         params = {
             "jql": jql,
             "maxResults": max_results,
