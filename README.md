@@ -47,6 +47,14 @@ python tests/demo_agent.py
 
 ## ✨ Key Features
 
+### 🧠 NEW: RAG System (Retrieval-Augmented Generation)
+- **Context-Aware AI** - Learns from past projects
+- **Knowledge Base** - Stores tasks, best practices, code patterns
+- **Semantic Search** - Finds relevant solutions instantly
+- **Continuous Learning** - Gets smarter over time
+- **100% Local** - No external API calls, completely private
+- **See:** [RAG System Documentation](docs/RAG_SYSTEM.md)
+
 ### 🆓 Completely FREE
 - **GitHub Models** (FREE! Uses your GitHub token)
 - **Groq** (FREE! Llama 3.3 70B)
