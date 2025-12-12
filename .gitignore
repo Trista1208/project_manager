@@ -1,48 +1,43 @@
-# Google OAuth secrets
-credentials.json
-token.json
-
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# Python cache
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
 .Python
+*.egg-info/
+dist/
+build/
 
 # Virtual environments
-.venv/
+test_venv/
 venv/
 env/
 ENV/
-test_venv/
 
-# Project state
-state/
-*.db
-
-# PyCharm & local settings
+# IDE
 .idea/
-*.iml
 .vscode/
 *.swp
 *.swo
+*~
 
-# macOS
+# Environment variables
+.env
+
+# RAG databases (too large for git)
+rag_data/
+test_rag_data/
+data/rag_db/
+
+# OS files
 .DS_Store
-.AppleDouble
-.LSOverride
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Logs
 *.log
-logs/
 
-# Temporary files
-*.tmp
-*.bak
-*~
-test_venv/
